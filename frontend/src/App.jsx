@@ -1,13 +1,27 @@
 import { useState } from 'react'
 import './App.css'
 
+// router
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+// pages
+import Home from './pages/Home/Home';
+import Login from './pages/Auth/Login';
+import Register from './pages/Auth/Register';
+
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
       <div>
-        <h1>ReactGram</h1>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        </BrowserRouter>
       </div>
     </>
   )
