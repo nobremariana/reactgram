@@ -1,42 +1,99 @@
-import "./Navbar.css"
+import "./Navbar.css";
 
 // Components
 import { NavLink, Link } from "react-router-dom";
 import {
   BsSearch,
-  BsHouseDoorFill,
-  BsFillPersonFill,
-  BsFillCameraFill,
+  BsCamera,
 } from "react-icons/bs";
+import { IoPersonCircleOutline } from "react-icons/io5";
+import { GoHomeFill } from "react-icons/go";
+
+// Hooks
+import { useState } from "react";
+import { useAuth } from "../hooks/useAuth";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+// Redux
+import { logout, reset } from "../slices/authSlice";
 
 const Navbar = () => {
+  const { auth } = useAuth();
+  const { user } = useSelector((state) => state.auth);
+
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const [query, setQuery] = useState("");
+
+  const handleLogout = () => {
+    dispatch(logout());
+    dispatch(reset());
+
+    navigate("/login");
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+
+    if (query) {
+      return navigate(`/search?q=${query}`);
+    }
+  };
+
   return (
     <nav id="nav">
-      <Link to="/">ReactGram</Link>
-      <form id="search-form">
+      <Link to="/">
+        <h2>ReactGram</h2>
+      </Link>
+      <form id="search-form" onSubmit={handleSearch}>
         <BsSearch />
-        <input type="text" />
+        <input
+          type="text"
+          placeholder="Pesquisar"
+          onChange={(e) => setQuery(e.target.value)}
+        />
       </form>
       <ul id="nav-links">
-       <li>
-         <NavLink to="/">
-          <BsHouseDoorFill />
-        </NavLink>
-       </li>
-        <li>
-          <NavLink to="/login">
-            Entrar
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/register" className="btn btn-primary">
-            Cadastrar
-          </NavLink>
-        </li>
+        {auth ? (
+          <>
+            <li>
+              <NavLink to="/">
+                <GoHomeFill />
+              </NavLink>
+            </li>
+            {user && (
+              <li>
+                <NavLink to={`/users/${user._id}`}>
+                  <BsCamera />
+                </NavLink>
+              </li>
+            )}
+            <li>
+              <NavLink to="/profile">
+                <IoPersonCircleOutline />
+              </NavLink>
+            </li>
+            <li>
+              <span onClick={handleLogout}>Sair</span>
+            </li>
+          </>
+        ) : (
+          <>
+            {" "}
+            <li>
+              <NavLink to="/login">Entrar</NavLink>
+            </li>
+            <li>
+              <NavLink to="/register">Cadastrar</NavLink>
+            </li>
+          </>
+        )}
       </ul>
-
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
