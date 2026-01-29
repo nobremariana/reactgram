@@ -23,7 +23,6 @@ export const profile = createAsyncThunk(
   }
 );
 
-
 // Update user details
 export const updateProfile = createAsyncThunk(
   "user/update",
@@ -43,6 +42,19 @@ export const updateProfile = createAsyncThunk(
   }
 );
 
+// Get user details
+export const getUserDetails = createAsyncThunk(
+  "user/get",
+  async (id, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+
+    const data = await userService.getUserDetails(id, token);
+
+    console.log(data);
+
+    return data;
+  }
+);
 
 export const userSlice = createSlice({
   name: "user",
@@ -52,19 +64,23 @@ export const userSlice = createSlice({
       state.message = null;
     },
   },
-    extraReducers: (builder) => {
-      builder
-        .addCase(profile.pending, (state) => {
-          state.loading = true;
-          state.error = null;
-        })
-        .addCase(profile.fulfilled, (state, action) => {
-          state.loading = false;
-          state.success = true;
-          state.error = null;
-          state.user = action.payload;
-        })
-        .addCase(updateProfile.fulfilled, (state, action) => {
+  extraReducers: (builder) => {
+    builder
+      .addCase(profile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(profile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.error = null;
+        state.user = action.payload;
+      })
+      .addCase(updateProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
         state.error = null;
@@ -76,8 +92,18 @@ export const userSlice = createSlice({
         state.error = action.payload;
         state.user = null;
       })
-    },
+      .addCase(getUserDetails.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.error = null;
+        state.user = action.payload;
+      });
+  },
 });
 
 export const { resetMessage } = userSlice.actions;
-export default userSlice.reducer
+export default userSlice.reducer;
