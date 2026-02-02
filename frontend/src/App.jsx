@@ -18,9 +18,10 @@ import Register from './pages/Auth/Register';
 import EditProfile from './pages/EditProfile/EditProfile';
 import Profile from './pages/Profile/Profile';
 import Photo from './pages/Photo/Photo';
+import Search from './pages/Search/Search'
 
 function App() {
-   const { auth, loading } = useAuth();
+  const { auth, loading } = useAuth();
 
   if (loading) {
     return <p>Carregando...</p>;
@@ -38,7 +39,8 @@ function App() {
             <Route path="/users/:id" element={auth ? <Profile /> : <Navigate to="/" />} />
             <Route path="/register" element={!auth ? <Register /> : <Navigate to="/" />} />
             <Route path="/profile" element={auth ? <EditProfile /> : <Navigate to="/login" />} />
-             <Route path="photos/:id" element={<Photo />} />
+            <Route path="/search" element={auth ? <Search /> : <Navigate to="/login" />} />
+            <Route path="photos/:id" element={<Photo />} />
 
           </Routes>
           <Footer />
